@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="RescueDLL/RescueDLL.vcxproj" Id="8eea4453-7b8c-4565-8ba6-0520b6618969" />
+</Solution>
