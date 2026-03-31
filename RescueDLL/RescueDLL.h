@@ -19,6 +19,8 @@ constexpr int ERR_INDEX{ 3002 };
 constexpr int ERR_PARAM{ 3003 };
 constexpr int ERR_UNK{ 3004 };
 
+enum class dirs { left = 0, right = 1, up = 2, down = 3, stop = 4 };
+
 struct RESCUEDLL_API FPOINT
 {
 	float x{ 0 };
@@ -310,7 +312,52 @@ namespace dll
 		float operator()(float min, float max);
 	};
 
+	class RESCUEDLL_API PROTON
+	{
+	protected:
+		float _width{ 0 };
+		float _height{ 0 };
 
+		float move_sx{ 0 };
+		float move_ex{ 0 };
+		float move_sy{ 0 };
+		float move_ey{ 0 };
+
+		float slope{ 0 };
+		float intercept{ 0 };
+
+		bool ver_dir = false;
+		bool hor_dir = false;
+
+	public:
+		FPOINT start{};
+		FPOINT end{};
+		FPOINT center{};
+
+		float x_rad{ 0 };
+		float y_rad{ 0 };
+
+		dirs dir = dirs::stop;
+
+		PROTON();
+		PROTON(float _first_x, float _first_y);
+		PROTON(float _first_x, float _first_y, float _first_width, float _first_height);
+
+		virtual ~PROTON() {};
+
+		void set_edges();
+		void new_dims(float _new_width, float _new_height);
+
+		void new_width(float _new_width);
+		void new_height(float _new_height);
+
+		void set_path(float _target_x, float _target_y);
+
+		float get_target_x()const;
+		float get_target_y()const;
+		float get_width()const;
+		float get_height()const;
+	};
 
 
 

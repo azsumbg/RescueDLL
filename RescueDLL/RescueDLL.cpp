@@ -62,3 +62,143 @@ float dll::RANDIT::operator()(float min, float max)
 }
 
 //////////////////////////////////////////////
+
+// CLASS PROTON *****************************
+
+dll::PROTON::PROTON()
+{
+	_width = 1.0f;
+	_height = 1.0f;
+
+	x_rad = _width / 2.0f;
+	y_rad = _height / 2.0f;
+
+	center.x = start.x + x_rad;
+	center.y = start.y + y_rad;
+
+	end.x = start.x + _width;
+	end.y = start.y + _height;
+}
+dll::PROTON::PROTON(float _first_x, float _first_y)
+{
+	start.x = _first_x;
+	start.y = _first_y;
+
+	_width = 1.0f;
+	_height = 1.0f;
+
+	x_rad = _width / 2.0f;
+	y_rad = _height / 2.0f;
+
+	center.x = start.x + x_rad;
+	center.y = start.y + y_rad;
+
+	end.x = start.x + _width;
+	end.y = start.y + _height;
+}
+dll::PROTON::PROTON(float _first_x, float _first_y, float _first_width, float _first_height)
+{
+	start.x = _first_x;
+	start.y = _first_y;
+
+	_width = _first_width;
+	_height = _first_height;
+
+	x_rad = _width / 2.0f;
+	y_rad = _height / 2.0f;
+
+	center.x = start.x + x_rad;
+	center.y = start.y + y_rad;
+
+	end.x = start.x + _width;
+	end.y = start.y + _height;
+}
+
+void dll::PROTON::set_edges()
+{
+	center.x = start.x + x_rad;
+	center.y = start.y + y_rad;
+
+	end.x = start.x + _width;
+	end.y = start.y + _height;
+}
+void dll::PROTON::new_dims(float _new_width, float _new_height)
+{
+	_width = _new_width;
+	_height = _new_height;
+
+	x_rad = _width / 2.0f;
+	y_rad = _height / 2.0f;
+
+	center.x = start.x + x_rad;
+	center.y = start.y + y_rad;
+
+	end.x = start.x + _width;
+	end.y = start.y + _height;
+}
+
+void dll::PROTON::new_width(float _new_width)
+{
+	_width = _new_width;
+
+	x_rad = _width / 2.0f;
+
+	center.x = start.x + x_rad;
+
+	end.x = start.x + _width;
+}
+void dll::PROTON::new_height(float _new_height)
+{
+	_height = _new_height;
+
+	y_rad = _height / 2.0f;
+
+	center.y = start.y + y_rad;
+
+	end.y = start.y + _height;
+}
+
+void dll::PROTON::set_path(float _target_x, float _target_y)
+{
+	ver_dir = false;
+	hor_dir = false;
+
+	move_sx = start.x;
+	move_sy = start.y;
+
+	move_ex = _target_x;
+	move_ex = _target_y;
+
+	if (move_sx == move_ex || (move_ex >= start.x && move_ex <= end.x))
+	{
+		ver_dir = true;
+		return;
+	}
+	if (move_sy == move_ey || (move_ey >= start.y && move_ey <= end.y))
+	{
+		hor_dir = true;
+		return;
+	}
+
+	slope = (move_ey - move_sy) / (move_ex - move_sx);
+	intercept = start.y - start.x * slope;
+}
+
+float dll::PROTON::get_target_x()const
+{
+	return move_ex;
+}
+float dll::PROTON::get_target_y()const
+{
+	return move_ey;
+}
+float dll::PROTON::get_width()const
+{
+	return _width;
+}
+float dll::PROTON::get_height()const
+{
+	return _height;
+}
+
+/////////////////////////////////////////////
