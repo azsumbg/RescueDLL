@@ -128,6 +128,8 @@ namespace dll
 				if (other.m_pos > 0)
 					for (size_t i = 0; i < other.m_pos; ++i)m_ptr[i] = other.m_ptr[i];
 			}
+
+			return *this;
 		}
 		BAG& operator=(BAG&& other)
 		{
@@ -142,6 +144,8 @@ namespace dll
 
 				other.m_ptr = nullptr;
 			}
+
+			return *this;
 		}
 
 		T& operator[](size_t index)
@@ -263,6 +267,31 @@ namespace dll
 				{
 					for (size_t count = index; count < m_pos - 1; ++count)m_pos[count] = m_pos[count + 1];
 					--m_pos;
+				}
+			}
+		}
+
+		void insert(size_t index, T element)
+		{
+			if (index < 0 || index > m_pos)throw EXCEPTION(ERR_INDEX);
+			if (!m_ptr)throw EXCEPTION(ERR_PTR);
+
+			if (m_pos + 1 <= m_size)
+			{
+				for (size_t count = m_pos; count > index; --count)m_ptr[count] = m_ptr[count - 1];
+				m_ptr[index] = element;
+				++m_pos;
+			}
+			else
+			{
+				++m_size;
+				m_ptr = realloc(m_ptr, m_size * sizeof(T));
+				if (!m_ptr)throw EXCEPTION(ERR_PTR);
+				else
+				{
+					for (size_t count = m_pos; count > index; --count)m_ptr[count] = m_ptr[count - 1];
+					m_ptr[index] = element;
+					++m_pos;
 				}
 			}
 		}
