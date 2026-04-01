@@ -7,6 +7,7 @@
 #endif
 
 #include <random>
+#include <type_traits>
 
 constexpr float scr_width{ 800.0f };
 constexpr float scr_height{ 650.0f };
@@ -299,6 +300,37 @@ namespace dll
 		}
 	};
 
+	template<typename T> concept PRIMES = std::is_same<T, char>::value ||
+		std::is_same<T, wchar_t>::value || std::is_same<T, int>::value || std::is_same<T, float>::value
+		|| std::is_same<T, double>::value || std::is_same<T, long>::value || std::is_same<T, short>::value;
+
+	////////////////////////////////////////////////////
+	
+	template<PRIMES T>bool Sort(BAG<T>Bag, bool ascending)
+	{
+		if (Bag.empty())return false;
+		
+		bool ok = false;
+
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t count = 0; count < Bag.size() - 1; ++count)
+			{
+				if (Bag[count] > Bag[count + 1])
+				{
+					T temp = Bag[count];
+					Bag[count] = Bag[count + 1];
+					Bag[count + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	class RESCUEDLL_API RANDIT
 	{
 	private:
@@ -363,6 +395,10 @@ namespace dll
 
 
 
+	// FUNCTIONS *****************************************
 
+	RESCUEDLL_API float Distance(FPOINT first, FPOINT second);
+
+	RESCUEDLL_API void Sort(BAG<FPOINT>& bag, FPOINT target);
 
 }

@@ -202,3 +202,46 @@ float dll::PROTON::get_height()const
 }
 
 /////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+// FUNCTIONS *********************************
+
+float dll::Distance(FPOINT first, FPOINT second)
+{
+	float a = (float)(pow(abs(second.x - first.x), 2));
+	float b = (float)(pow(abs(second.y - first.y), 2));
+
+	return (float)(sqrt(a + b));
+}
+
+void dll::Sort(BAG<FPOINT>& bag, FPOINT target)
+{
+	if (bag.size() < 2)return;
+	else
+	{
+		bool ok = false;
+		
+		while (!ok)
+		{
+			ok = true;
+
+			for (size_t count = 0; count < bag.size() - 1; ++count)
+			{
+				if (Distance(bag[count], target) > Distance(bag[count + 1], target))
+				{
+					FPOINT temp = bag[count];
+					bag[count] = bag[count + 1];
+					bag[count + 1] = temp;
+					ok = false;
+				}
+			}
+		}
+	}
+}
