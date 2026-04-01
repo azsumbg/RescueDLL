@@ -203,9 +203,61 @@ float dll::PROTON::get_height()const
 
 /////////////////////////////////////////////
 
+// CLASS FIELDS ****************************
 
+dll::FIELDS::FIELDS(assets _what, float _sx, float _sy) :PROTON(_sx, _sy)
+{
+	type = _what;
 
+	switch (type)
+	{
+	case assets::field:
+		new_dims(800.0f, 600.0f);
+		break;
 
+	case assets::ground:
+		new_dims(800.0f, 100.0f);
+		break;
+	}
+}
+
+bool dll::FIELDS::move(dirs dir, float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	switch (dir)
+	{
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x <= -scr_width)return false;
+		break;
+
+	case dirs::right:
+		start.x += my_speed;
+		set_edges();
+		if (start.x >= 2.0f * scr_width)return false;
+		break;
+	}
+
+	return true;
+}
+
+void dll::FIELDS::Release()
+{
+	delete this;
+}
+
+dll::FIELDS* dll::FIELDS::create(assets what, float sx, float sy)
+{
+	FIELDS* ret = nullptr;
+
+	ret = new FIELDS(what, sx, sy);
+
+	return ret;
+}
+
+////////////////////////////////////////////
 
 
 

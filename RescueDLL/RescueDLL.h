@@ -15,12 +15,19 @@ constexpr float scr_height{ 650.0f };
 constexpr float sky{ 50.0f };
 constexpr float ground{ 550.0f };
 
+constexpr float nature_speed{ 1.0f };
+
 constexpr int ERR_PTR{ 3001 };
 constexpr int ERR_INDEX{ 3002 };
 constexpr int ERR_PARAM{ 3003 };
 constexpr int ERR_UNK{ 3004 };
 
-enum class dirs { left = 0, right = 1, up = 2, down = 3, stop = 4 };
+enum class dirs {
+	left = 0, right = 1, up = 2, down = 3, up_left = 4, up_right = 5,
+	down_left = 6, down_right = 7, stop = 8
+};
+enum class assets { field = 0, ground = 1, civilian = 2, supply = 3 };
+
 
 struct RESCUEDLL_API FPOINT
 {
@@ -391,7 +398,22 @@ namespace dll
 		float get_height()const;
 	};
 
+	class RESCUEDLL_API FIELDS :public PROTON
+	{
+	private:
+		float _speed = nature_speed;
 
+		FIELDS(assets _what, float _sx, float _sy);
+
+	public:
+		assets type = assets::field;
+		
+		static FIELDS* create(assets what, float sx, float sy);
+
+		bool move(dirs dir, float gear);
+
+		void Release();
+	};
 
 
 
