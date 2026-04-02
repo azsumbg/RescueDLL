@@ -259,6 +259,253 @@ dll::FIELDS* dll::FIELDS::create(assets what, float sx, float sy)
 
 ////////////////////////////////////////////
 
+// CLASS ASSETS ****************************
+
+dll::ASSETS::ASSETS(assets _what, float _sx, float _sy) :PROTON(_sx, _sy)
+{
+	type = _what;
+
+	switch (type)
+	{
+	case assets::civilian:
+		new_dims(44.0f, 80.0f);
+		max_frames = 16;
+		frame_delay = 4;
+		break;
+
+	case assets::supply :
+		new_dims(40.0f, 51.0f);
+		if (_Rand(0, 4) == 2)set_path(start.x - 50.0f, ground);
+		else set_path(end.x + 50.0f, ground);
+		max_frames = 26;
+		frame_delay = 3;
+		break;
+	}
+
+	max_frame_delay = frame_delay;
+}
+
+bool dll::ASSETS::move(dirs dir, float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (type == assets::civilian)
+	{
+		switch (dir)
+		{
+		case dirs::left:
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width)return false;
+			break;
+
+		case dirs::right:
+			start.x += my_speed;
+			set_edges();
+			if (start.x >= 2.0f * scr_width)return false;
+			break;
+		}
+	}
+	else
+	{
+		if (hor_dir)
+		{
+			if (move_ex < move_sx)
+			{
+				this->dir = dirs::left;
+				start.x -= my_speed;
+				set_edges();
+				if (start.x <= move_ex)
+				{
+					set_path(end.x + 100.0f, ground);
+					dir = dirs::right;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+			else
+			{
+				this->dir = dirs::right;
+				start.x += my_speed;
+				set_edges();
+				if (end.x >= move_ex)
+				{
+					set_path(start.x - 100.0f, ground);
+					dir = dirs::left;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+		}
+		else if (ver_dir)
+		{
+			if (move_ey < move_sy)
+			{
+				start.y -= my_speed;
+				set_edges();
+				if (start.y <= move_ey)
+				{
+					set_path(end.x + 100.0f, ground);
+					this->dir = dirs::right;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+			else
+			{
+				start.y += my_speed;
+				set_edges();
+				if (end.y >= move_ey)
+				{
+					set_path(start.x - 100.0f, ground);
+					this->dir = dirs::left;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+		}
+		else
+		{
+			if (move_ex < move_sx)
+			{
+				this->dir = dirs::left;
+				start.x -= my_speed;
+				start.y = start.x * slope + intercept;
+				set_edges();
+				if (start.x <= move_ex)
+				{
+					set_path(end.x + 100.0f, ground);
+					dir = dirs::right;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+			else
+			{
+				this->dir = dirs::right;
+				start.x += my_speed;
+				start.y = start.x * slope + intercept;
+				set_edges();
+				if (end.x >= move_ex)
+				{
+					set_path(start.x - 100.0f, ground);
+					dir = dirs::left;
+				}
+				if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+void dll::ASSETS::Release()
+{
+	delete this;
+}
+
+int dll::ASSETS::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
+	return frame;
+}
+
+dll::ASSETS* dll::ASSETS::create(assets what, float sx, float sy)
+{
+	ASSETS* ret = nullptr;
+
+	ret = new ASSETS(what, sx, sy);
+
+	return ret;
+}
+
+////////////////////////////////////////////
+
+// CLASS SHOTS ****************************
+
+dll::SHOTS::SHOTS(float _first_x, float _first_y, float _end_x, float _end_y) :PROTON(_first_x, _first_y, 15.0f, 15.0f)
+{
+	set_path(_end_x, _end_y);
+}
+
+bool dll::SHOTS::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (hor_dir)
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else if (ver_dir)
+	{
+		if (move_ey < move_sy)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.y += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+
+	return true;
+}
+
+void dll::SHOTS::Release()
+{
+	delete this;		
+}
+
+dll::SHOTS* dll::SHOTS::create(float first_x, float first_y, float end_x, float end_y)
+{
+	SHOTS* ret{ nullptr };
+
+	ret = new SHOTS(first_x, first_y, end_x, end_y);
+	
+	return ret;
+}
+
+//////////////////////////////////////////
+
+
+
+
+
+
+
 
 
 

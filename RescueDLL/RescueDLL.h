@@ -415,7 +415,48 @@ namespace dll
 		void Release();
 	};
 
+	class RESCUEDLL_API ASSETS :public PROTON
+	{
+	private:
+		int frame = 0;
+		int max_frames = 0;
+		int frame_delay = 0;
+		int max_frame_delay = 0;
 
+		float _speed = nature_speed;
+
+		RANDIT _Rand{};
+
+		ASSETS(assets _what, float _sx, float _sy);
+
+	public:
+		assets type = assets::civilian;
+
+		static ASSETS* create(assets what, float sx, float sy);
+
+		bool move(dirs dir, float gear);
+
+		int get_frame();
+
+		void Release();
+	};
+
+	class RESCUEDLL_API SHOTS :public PROTON
+	{
+	private:
+		float _speed = 5.0f;
+
+		SHOTS(float _first_x, float _first_y, float _end_x, float _end_y);
+
+	public:
+		int damage = 10;
+
+		bool move(float gear);
+
+		void Release();
+
+		static SHOTS* create(float first_x, float first_y, float end_x, float end_y);
+	};
 
 	// FUNCTIONS *****************************************
 
