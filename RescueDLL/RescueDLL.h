@@ -27,7 +27,7 @@ enum class dirs {
 	down_left = 6, down_right = 7, stop = 8
 };
 enum class assets { field = 0, ground = 1, civilian = 2, supply = 3 };
-
+enum class meteors { big = 0, mid = 1 };
 
 struct RESCUEDLL_API FPOINT
 {
@@ -456,6 +456,25 @@ namespace dll
 		void Release();
 
 		static SHOTS* create(float first_x, float first_y, float end_x, float end_y);
+	};
+
+	class RESCUEDLL_API METEORS :public PROTON
+	{
+	private:
+		int max_delay = 4;
+		int frame = 0;
+		float _speed = 1.0f;
+
+		METEORS(meteors _type, float _first_x, float _first_y, float _end_x, float _end_y);
+
+	public:
+		meteors type{ meteors::big };
+		
+		bool move(float gear);
+
+		void Release();
+
+		static METEORS* create(meteors type, float first_x, float first_y, float end_x, float end_y);
 	};
 
 	// FUNCTIONS *****************************************

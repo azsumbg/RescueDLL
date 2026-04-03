@@ -500,9 +500,98 @@ dll::SHOTS* dll::SHOTS::create(float first_x, float first_y, float end_x, float 
 
 //////////////////////////////////////////
 
+// CLASS SHOTS ****************************
 
+dll::METEORS::METEORS(meteors _type, float _first_x, float _first_y, float _end_x, float _end_y) :PROTON(_first_x, _first_y)
+{
+	type = _type;
 
+	switch (type)
+	{
+	case meteors::big:
+		new_dims(100.0f, 120.0f);
+		_speed = 0.8f;
+		break;
 
+	case meteors::mid:
+		new_dims(90.0f, 80.0f);
+		_speed = 1.1f;
+		break;
+	}
+
+	set_path(_end_x, _end_y);
+}
+
+bool dll::METEORS::move(float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	if (hor_dir)
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else if (ver_dir)
+	{
+		if (move_ey < move_sy)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.y += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+
+	return true;
+}
+
+void dll::METEORS::Release()
+{
+	delete this;
+}
+
+dll::METEORS* dll::METEORS::create(meteors type, float first_x, float first_y, float end_x, float end_y)
+{
+	METEORS* ret{ nullptr };
+
+	ret = new METEORS(type, first_x, first_y, end_x, end_y);
+
+	return ret;
+}
+
+///////////////////////////////////////////
 
 
 
