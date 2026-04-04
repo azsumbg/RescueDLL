@@ -593,6 +593,71 @@ dll::METEORS* dll::METEORS::create(meteors type, float first_x, float first_y, f
 
 ///////////////////////////////////////////
 
+// CLASS GUN ******************************
+
+dll::GUN::GUN(float _sx, float _sy) :PROTON(_sx, _sy, 85.0f, 94.0f) {};
+
+bool dll::GUN::move(dirs dir, float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	switch (dir)
+	{
+	case dirs::left:
+		start.x -= my_speed;
+		set_edges();
+		if (end.x <= -scr_width)return false;
+		break;
+
+	case dirs::right:
+		start.x += my_speed;
+		set_edges();
+		if (start.x >= 2.0f * scr_width)return false;
+		break;
+	}
+
+	return true;
+	
+}
+
+int dll::GUN::attack()
+{
+	--delay;
+	if (delay <= 0)
+	{
+		delay = 100;
+		return damage;
+	}
+	return 0;
+}
+
+int dll::GUN::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = 13;
+		++frame;
+		if (frame > 3)frame = 0;
+	}
+	return frame;
+}
+
+void dll::GUN::Release()
+{
+	delete this;
+}
+
+dll::GUN* dll::GUN::create(float sx, float sy)
+{
+	GUN* ret{ nullptr };
+
+	ret = new GUN(sx, sy);
+	
+	return ret;
+}
+
+///////////////////////////////////////////
 
 
 

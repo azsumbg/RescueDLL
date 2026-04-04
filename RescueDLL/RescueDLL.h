@@ -15,7 +15,7 @@ constexpr float scr_height{ 650.0f };
 constexpr float sky{ 50.0f };
 constexpr float ground{ 550.0f };
 
-constexpr float nature_speed{ 1.0f };
+float nature_speed{ 1.0f };
 
 constexpr int ERR_PTR{ 3001 };
 constexpr int ERR_INDEX{ 3002 };
@@ -475,6 +475,32 @@ namespace dll
 		void Release();
 
 		static METEORS* create(meteors type, float first_x, float first_y, float end_x, float end_y);
+	};
+
+	class RESCUEDLL_API GUN :public PROTON
+	{
+		int max_delay = 100;
+		int delay = 100;
+
+		int frame_delay = 13;
+		int frame = 0;
+
+		float _speed{ nature_speed };
+
+		GUN(float _sx, float _sy);
+
+	public:
+		int damage = 50;
+
+		bool move(dirs dir, float gear);
+
+		int attack();
+
+		int get_frame();
+
+		void Release();
+
+		static GUN* create(float sx, float sy);
 	};
 
 	// FUNCTIONS *****************************************
