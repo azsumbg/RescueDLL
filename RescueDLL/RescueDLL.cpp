@@ -744,12 +744,14 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 		{
 			start.x -= my_speed;
 			set_edges();
+			dir = dirs::left;
 			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
 		}
 		else
 		{
 			start.x += my_speed;
 			set_edges();
+			dir = dirs::right;
 			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
 		}
 	}
@@ -775,6 +777,7 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 			start.x -= my_speed;
 			start.y = start.x * slope + intercept;
 			set_edges();
+			dir = dirs::left;
 			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
 		}
 		else
@@ -782,6 +785,7 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 			start.x += my_speed;
 			start.y = start.x * slope + intercept;
 			set_edges();
+			dir = dirs::right;
 			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
 		}
 	}
@@ -876,4 +880,121 @@ int dll::IntroFrame()
 	}
 
 	return frame;
+}
+
+todo dll::AINextMove(EVIL& my_unit, BAG<FPOINT>&civils, BAG<FPOINT>&shots, BAG<FPOINT>&powerups, FPOINT hero)
+{
+	todo ret = my_unit.current_action;
+
+	if (!civils.empty())Sort(civils, my_unit.center);
+	if (!shots.empty())Sort(shots, my_unit.center);
+	if (!powerups.empty())Sort(powerups, my_unit.center);
+
+	float target_x = my_unit.get_target_x();
+	float target_y = my_unit.get_target_x();
+
+	if (my_unit.current_action == todo::patrol)
+	{
+		if (Distance(my_unit.center, hero) <= my_unit.shoot_range)ret = todo::shoot;
+		else if (Distance(my_unit.center, hero) <= my_unit.see_range)
+		{
+			my_unit.set_path(hero.x, hero.y);
+			ret = todo::move;
+		}
+		else if (!shots.empty())
+		{
+			if (Distance(my_unit.center, shots[0]) <= 100)
+			{
+				if (shots[0].x > my_unit.center.x)
+				{
+					if (shots[0].y > my_unit.center.y)my_unit.set_path(0.0f, sky);
+					else if (shots[0].y < my_unit.center.y)my_unit.set_path(0.0f, ground);
+					else my_unit.set_path(0, target_y);
+				}
+				else if (shots[0].x < my_unit.center.x)
+				{
+					if (shots[0].y > my_unit.center.y)my_unit.set_path(scr_width, sky);
+					else if (shots[0].y < my_unit.center.y)my_unit.set_path(scr_width, ground);
+					else my_unit.set_path(scr_width, target_y);
+				}
+				else
+				{
+					if (shots[0].y > my_unit.center.y)my_unit.set_path(target_x, sky);
+					else if (shots[0].y < my_unit.center.y)my_unit.set_path(target_x, ground);
+					else my_unit.set_path(target_x, target_y);
+				}
+			
+				ret = todo::move;
+			}
+		}
+		else if (!powerups.empty())
+		{
+			if (Distance(powerups[0], my_unit.center) <= my_unit.see_range)my_unit.set_path(powerups[0].x, powerups[0].y);
+			ret = todo::move;
+		}
+		else
+		{
+			if (my_unit.start.x - 10.0f <= -scr_width / 2.0f)
+			{
+				my_unit.set_path(scr_width + scr_width / 2.0f, target_y);
+				ret = todo::patrol;
+			}
+			else if (my_unit.end.x + 10.0f >= scr_width + scr_width / 2.0f)
+			{
+				my_unit.set_path(-scr_width / 2.0f, target_y);
+				ret = todo::patrol;
+			}
+			else if (my_unit.start.y - 10.0f <= sky)
+			{
+				my_unit.set_path(target_x, ground);
+				ret = todo::patrol;
+			}
+			else if (my_unit.end.y + 10.0f >= ground)
+			{
+				my_unit.set_path(target_x, sky);
+				ret = todo::patrol;
+			}
+		}
+	}
+	else if (my_unit.current_action == todo::move)
+	{
+		if (Distance(my_unit.center, hero) <= my_unit.shoot_range)ret = todo::shoot;
+		else if (Distance(my_unit.center, hero) <= my_unit.see_range)
+		{
+			my_unit.set_path(hero.x, hero.y);
+			ret = todo::move;
+		}
+		else
+		{
+			if (my_unit.dir == dirs::left && target_x >= my_unit.start.x)
+			{
+				if (my_unit.center.x >= scr_width / 2.0f)my_unit.set_path(-scr_width, target_y);
+				else my_unit.set_path(2.0f * scr_width, target_y);
+				ret = todo::patrol;
+				my_unit.current_action = todo::patrol;
+			}
+		}
+	}
+	else if (my_unit.current_action == todo::shoot)
+	{
+		if (Distance(my_unit.center, hero) <= my_unit.shoot_range)ret = todo::shoot;
+		else if (Distance(my_unit.center, hero) <= my_unit.see_range)
+		{
+			my_unit.set_path(hero.x, hero.y);
+			ret = todo::move;
+		}
+		else
+		{
+			if (my_unit.dir == dirs::left && target_x >= my_unit.start.x)
+			{
+				if (my_unit.center.x >= scr_width / 2.0f)my_unit.set_path(-scr_width, target_y);
+				else my_unit.set_path(2.0f * scr_width, target_y);
+				ret = todo::patrol;
+				my_unit.current_action = todo::patrol;
+			}
+		}
+	}
+
+	my_unit.current_action = ret;
+	return ret;
 }

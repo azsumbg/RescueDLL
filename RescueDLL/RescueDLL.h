@@ -29,6 +29,8 @@ enum class dirs {
 enum class assets { field = 0, ground = 1, civilian = 2, supply = 3 };
 enum class meteors { big = 0, mid = 1 };
 
+enum class todo { move = 0, shoot = 1, patrol = 2 };
+
 struct RESCUEDLL_API FPOINT
 {
 	float x{ 0 };
@@ -553,9 +555,14 @@ namespace dll
 		EVIL(float _sx, float _sy);
 
 	public:
+		todo current_action = todo::patrol;
+
 		int lifes = 120;
 		int armor = 1;
 		int damage = 5;
+
+		float see_range = 300.0f;
+		float shoot_range = 150.0f;
 
 		bool move(float ex, float ey, float gear);
 
@@ -574,4 +581,6 @@ namespace dll
 	RESCUEDLL_API void Sort(BAG<FPOINT>& bag, FPOINT target);
 	
 	RESCUEDLL_API int IntroFrame();
+
+	RESCUEDLL_API todo AINextMove(EVIL& my_unit, BAG<FPOINT>& civils, BAG<FPOINT>& shots, BAG<FPOINT>& powerups, FPOINT hero);
 }
