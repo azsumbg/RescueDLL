@@ -42,6 +42,16 @@ struct RESCUEDLL_API FRECT
 	float down{ 0 };
 };
 
+struct RESCUEDLL_API EXPLOSION
+{
+	float x{ 0 };
+	float y{ 0 };
+
+	int max_frames = 23;
+	int frame_delay = 3;
+	int max_frame_delay = 3;
+};
+
 namespace dll
 {
 	class RESCUEDLL_API EXCEPTION
@@ -503,10 +513,65 @@ namespace dll
 		static GUN* create(float sx, float sy);
 	};
 
+	class RESCUEDLL_API HERO :public PROTON
+	{
+	private:
+		int max_frames = 3;
+		int frame_delay = 20;
+		int max_frame_delay = 20;
+		int frame = 0;
+
+		float _speed = 10.0f;
+
+		HERO(float _sx, float _sy);
+
+	public:
+		int damage = 5;
+		int armor = 1;
+		int lifes = 150;
+
+		void move(float gear);
+		
+		int get_frame();
+		
+		void Release();
+	};
+
+	class RESCUEDLL_API EVIL:public PROTON
+	{
+	private:
+		int max_frames = 3;
+		int frame_delay = 22;
+		int max_frame_delay = 22;
+		int frame = 0;
+
+		float _speed = 0.8f;
+
+		int attack_delay = 80;
+		int max_attack_delay = 80;
+		
+		EVIL(float _sx, float _sy);
+
+	public:
+		int lifes = 120;
+		int armor = 1;
+		int damage = 5;
+
+		bool move(float ex, float ey, float gear);
+
+		int attack();
+		int get_frame();
+
+		void Release();
+
+		static EVIL* create(float sx, float sy);
+	};
+
 	// FUNCTIONS *****************************************
 
 	RESCUEDLL_API float Distance(FPOINT first, FPOINT second);
 
 	RESCUEDLL_API void Sort(BAG<FPOINT>& bag, FPOINT target);
-
+	
+	RESCUEDLL_API int IntroFrame();
 }

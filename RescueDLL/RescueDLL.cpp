@@ -659,10 +659,173 @@ dll::GUN* dll::GUN::create(float sx, float sy)
 
 ///////////////////////////////////////////
 
+// HERO **********************************
 
+dll::HERO::HERO(float _sx, float _sy) :PROTON(_sx, _sy, 100.0f, 78.0f)
+{
+	dir = dirs::right;
+}
 
+void dll::HERO::move(float gear)
+{
+	float my_speed = _speed + gear / 5.0f;
 
+	switch (dir)
+	{
+	case dirs::right:
+		if (end.x + my_speed <= scr_width)
+		{
+			start.x += my_speed;
+			set_edges();
+		}
+		break;
 
+	case dirs::left:
+		if (start.x - my_speed >= 0)
+		{
+			start.x -= my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::down:
+		if (end.y + my_speed <= ground)
+		{
+			start.y += my_speed;
+			set_edges();
+		}
+		break;
+
+	case dirs::up:
+		if (start.y - my_speed >= sky)
+		{
+			start.y -= my_speed;
+			set_edges();
+		}
+		break;
+	}
+}
+
+int dll::HERO::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
+
+	return frame;
+}
+
+void dll::HERO::Release()
+{
+	delete this;
+}
+
+//////////////////////////////////////////
+
+dll::EVIL::EVIL(float _sx, float _sy) :PROTON(_sx, _sy, 120.0f, 42.0f)
+{
+	if (center.x >= scr_width / 2.0f)dir = dirs::left;
+	else dir = dirs::right;
+}
+
+bool dll::EVIL::move(float ex, float ey, float gear)
+{
+	float my_speed = _speed + gear / 10.0f;
+
+	set_path(ex, ey);
+
+	if (hor_dir)
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else if (ver_dir)
+	{
+		if (move_ey < move_sy)
+		{
+			start.y -= my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.y += my_speed;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+	else
+	{
+		if (move_ex < move_sx)
+		{
+			start.x -= my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+		else
+		{
+			start.x += my_speed;
+			start.y = start.x * slope + intercept;
+			set_edges();
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+		}
+	}
+
+	return true;	
+}
+
+int dll::EVIL::attack()
+{
+	--attack_delay;
+	if (attack_delay <= 0)
+	{
+		attack_delay = max_attack_delay;
+		return damage;
+	}
+	return 0;
+}
+int dll::EVIL::get_frame()
+{
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = max_frame_delay;
+		++frame;
+		if (frame > max_frames)frame = 0;
+	}
+
+	return frame;
+	
+}
+
+void dll::EVIL::Release()
+{
+	delete this;
+}
+
+dll::EVIL* dll::EVIL::create(float sx, float sy)
+{
+	EVIL* ret{ nullptr };
+
+	ret = new EVIL(sx, sy);
+	
+	return ret;
+}
 
 // FUNCTIONS *********************************
 
@@ -697,4 +860,20 @@ void dll::Sort(BAG<FPOINT>& bag, FPOINT target)
 			}
 		}
 	}
+}
+
+int dll::IntroFrame()
+{
+	static int frame = 0;
+	static int frame_delay = 4;
+
+	--frame_delay;
+	if (frame_delay <= 0)
+	{
+		frame_delay = 4;
+		++frame;
+		if (frame > 15)frame = 0;
+	}
+
+	return frame;
 }
