@@ -28,6 +28,7 @@ enum class dirs {
 };
 enum class assets { field = 0, ground = 1, civilian = 2, supply = 3 };
 enum class meteors { big = 0, mid = 1 };
+enum class bonus { points = 0, repair = 1, armor = 2, gun = 3 };
 
 enum class todo { move = 0, shoot = 1, patrol = 2 };
 
@@ -572,6 +573,22 @@ namespace dll
 		void Release();
 
 		static EVIL* create(float sx, float sy);
+	};
+
+	struct RESCUEDLL_API BONUS
+	{
+		float sx{ 0 };
+		float sy{ 0 };
+		float ex{ 32.0f };
+		float ey{ 32.0f };
+
+		int duration = 3;
+
+		void set_edges()
+		{
+			ex = sx + 32.0f;
+			ey = sy + 32.0f;
+		}
 	};
 
 	// FUNCTIONS *****************************************
