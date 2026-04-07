@@ -724,6 +724,15 @@ void dll::HERO::Release()
 	delete this;
 }
 
+dll::HERO* dll::HERO::create(float sx, float sy)
+{
+	HERO* ret{ nullptr };
+
+	ret = new HERO(sx, sy);
+
+	return ret;
+}
+
 //////////////////////////////////////////
 
 dll::EVIL::EVIL(float _sx, float _sy) :PROTON(_sx, _sy, 120.0f, 42.0f)

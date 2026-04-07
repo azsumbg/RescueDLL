@@ -538,6 +538,8 @@ namespace dll
 		int get_frame();
 		
 		void Release();
+
+		static HERO* create(float sx, float sy);
 	};
 
 	class RESCUEDLL_API EVIL:public PROTON
