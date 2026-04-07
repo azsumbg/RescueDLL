@@ -581,8 +581,15 @@ namespace dll
 		float sy{ 0 };
 		float ex{ 32.0f };
 		float ey{ 32.0f };
+		
+		float opacity{ 1.0f };
 
-		int duration = 3;
+		void set_opacity()
+		{
+			static float duration = 3.1f;
+			duration -= 0.1f;
+			opacity = duration / 3.0f;
+		}
 
 		void set_edges()
 		{
