@@ -46,7 +46,7 @@ dll::RANDIT::~RANDIT()
 
 int dll::RANDIT::operator()(int min, int max)
 {
-	if (max >= min)return 0;
+	if (max <= min)return 0;
 
 	std::uniform_int_distribution distr(min, max);
 
@@ -54,7 +54,7 @@ int dll::RANDIT::operator()(int min, int max)
 }
 float dll::RANDIT::operator()(float min, float max)
 {
-	if (max >= min)return 0;
+	if (max <= min)return 0;
 
 	std::uniform_real_distribution<float> distr(min, max);
 
