@@ -891,6 +891,23 @@ int dll::IntroFrame()
 	return frame;
 }
 
+bool dll::Intersect(FPOINT first_center, FPOINT second_center, float first_xrad, float second_xrad,
+	float first_yrad, float second_yrad)
+{
+	if (abs(second_center.x - first_center.x) <= first_xrad + second_xrad &&
+		abs(second_center.y - first_center.y) <= first_yrad + second_yrad)return true;
+
+	return false;
+}
+
+bool dll::Intersect(FRECT first, FRECT second)
+{
+	if (!(first.left >= second.right || first.right <= second.left || first.up >= second.down || (first.down <= second.up)))
+		return true;
+
+	return false;
+}
+
 todo dll::AINextMove(EVIL& my_unit, BAG<FPOINT>&civils, BAG<FPOINT>&shots, BAG<FPOINT>&powerups, FPOINT hero)
 {
 	todo ret = my_unit.current_action;
