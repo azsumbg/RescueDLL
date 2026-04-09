@@ -439,13 +439,13 @@ bool dll::SHOTS::move(float gear)
 		{
 			start.x -= my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
 			start.x += my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 	else if (ver_dir)
@@ -454,13 +454,13 @@ bool dll::SHOTS::move(float gear)
 		{
 			start.y -= my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
 			start.y += my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 	else
@@ -470,14 +470,14 @@ bool dll::SHOTS::move(float gear)
 			start.x -= my_speed;
 			start.y = start.x * slope + intercept;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
 			start.x += my_speed;
 			start.y = start.x * slope + intercept;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 
@@ -625,7 +625,7 @@ int dll::GUN::attack()
 	--delay;
 	if (delay <= 0)
 	{
-		delay = 100;
+		delay = 120;
 		return damage;
 	}
 	return 0;

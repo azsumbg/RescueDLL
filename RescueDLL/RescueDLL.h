@@ -492,8 +492,7 @@ namespace dll
 
 	class RESCUEDLL_API GUN :public PROTON
 	{
-		int max_delay = 80;
-		int delay = 80;
+		int delay = 120;
 
 		int frame_delay = 13;
 		int frame = 0;
@@ -503,7 +502,7 @@ namespace dll
 		GUN(float _sx, float _sy);
 
 	public:
-		int damage = 50;
+		int damage = 20;
 
 		bool move(dirs dir, float gear);
 
