@@ -167,7 +167,7 @@ void dll::PROTON::set_path(float _target_x, float _target_y)
 	move_sy = start.y;
 
 	move_ex = _target_x;
-	move_ex = _target_y;
+	move_ey = _target_y;
 
 	if (move_sx == move_ex || (move_ex >= start.x && move_ex <= end.x))
 	{
@@ -902,7 +902,7 @@ bool dll::Intersect(FPOINT first_center, FPOINT second_center, float first_xrad,
 
 bool dll::Intersect(FRECT first, FRECT second)
 {
-	if (!(first.left >= second.right || first.right <= second.left || first.up >= second.down || (first.down <= second.up)))
+	if (!(first.left >= second.right || first.right <= second.left || first.up >= second.down || first.down <= second.up))
 		return true;
 
 	return false;
