@@ -50,6 +50,7 @@ struct RESCUEDLL_API EXPLOSION
 	float x{ 0 };
 	float y{ 0 };
 
+	int frame = 0;
 	int max_frames = 23;
 	int frame_delay = 3;
 	int max_frame_delay = 3;
@@ -457,9 +458,9 @@ namespace dll
 	class RESCUEDLL_API SHOTS :public PROTON
 	{
 	private:
-		float _speed = 2.0f;
+		float _speed = 4.0f;
 
-		SHOTS(float _first_x, float _first_y, float _end_x, float _end_y);
+		SHOTS(float _first_x, float _first_y, float _end_x, float _end_y, bool _is_bomb);
 
 	public:
 		int damage = 10;
@@ -468,7 +469,7 @@ namespace dll
 
 		void Release();
 
-		static SHOTS* create(float first_x, float first_y, float end_x, float end_y);
+		static SHOTS* create(float first_x, float first_y, float end_x, float end_y, bool is_bomb);
 	};
 
 	class RESCUEDLL_API METEORS :public PROTON
@@ -482,7 +483,8 @@ namespace dll
 
 	public:
 		meteors type{ meteors::big };
-		
+		int lifes = 200;
+
 		bool move(float gear);
 
 		void Release();
@@ -492,6 +494,7 @@ namespace dll
 
 	class RESCUEDLL_API GUN :public PROTON
 	{
+	private:
 		int delay = 120;
 
 		int frame_delay = 13;
@@ -502,6 +505,7 @@ namespace dll
 		GUN(float _sx, float _sy);
 
 	public:
+		int lifes = 100;
 		int damage = 20;
 
 		bool move(dirs dir, float gear);
@@ -563,8 +567,8 @@ namespace dll
 		int armor = 1;
 		int damage = 5;
 
-		float see_range = 300.0f;
-		float shoot_range = 150.0f;
+		float see_range = 200.0f;
+		float shoot_range = 100.0f;
 
 		bool move(float ex, float ey, float gear);
 

@@ -268,7 +268,7 @@ dll::ASSETS::ASSETS(assets _what, float _sx, float _sy) :PROTON(_sx, _sy)
 	switch (type)
 	{
 	case assets::civilian:
-		new_dims(44.0f, 80.0f);
+		new_dims(22.0f, 40.0f);
 		max_frames = 16;
 		frame_delay = 4;
 		break;
@@ -424,14 +424,15 @@ dll::ASSETS* dll::ASSETS::create(assets what, float sx, float sy)
 
 // CLASS SHOTS ****************************
 
-dll::SHOTS::SHOTS(float _first_x, float _first_y, float _end_x, float _end_y) :PROTON(_first_x, _first_y, 15.0f, 15.0f)
+dll::SHOTS::SHOTS(float _first_x, float _first_y, float _end_x, float _end_y, bool _is_bomb) :PROTON(_first_x, _first_y, 15.0f, 15.0f)
 {
+	if (_is_bomb)new_dims(15.0f, 49.0f);
 	set_path(_end_x, _end_y);
 }
 
 bool dll::SHOTS::move(float gear)
 {
-	float my_speed = _speed + gear / 10.0f;
+	float my_speed = _speed + gear / 3.0f;
 
 	if (hor_dir)
 	{
@@ -489,11 +490,11 @@ void dll::SHOTS::Release()
 	delete this;		
 }
 
-dll::SHOTS* dll::SHOTS::create(float first_x, float first_y, float end_x, float end_y)
+dll::SHOTS* dll::SHOTS::create(float first_x, float first_y, float end_x, float end_y, bool is_bomb)
 {
 	SHOTS* ret{ nullptr };
 
-	ret = new SHOTS(first_x, first_y, end_x, end_y);
+	ret = new SHOTS(first_x, first_y, end_x, end_y, is_bomb);
 	
 	return ret;
 }
@@ -754,14 +755,14 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 			start.x -= my_speed;
 			set_edges();
 			dir = dirs::left;
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
 			start.x += my_speed;
 			set_edges();
 			dir = dirs::right;
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 	else if (ver_dir)
@@ -770,13 +771,13 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 		{
 			start.y -= my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
 			start.y += my_speed;
 			set_edges();
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 	else
@@ -787,7 +788,7 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 			start.y = start.x * slope + intercept;
 			set_edges();
 			dir = dirs::left;
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 		else
 		{
@@ -795,7 +796,7 @@ bool dll::EVIL::move(float ex, float ey, float gear)
 			start.y = start.x * slope + intercept;
 			set_edges();
 			dir = dirs::right;
-			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= ground)return false;
+			if (end.x <= -scr_width || start.x >= 2.0f * scr_width || end.y <= 0 || end.y >= scr_height)return false;
 		}
 	}
 
@@ -929,7 +930,7 @@ todo dll::AINextMove(EVIL& my_unit, BAG<FPOINT>&civils, BAG<FPOINT>&shots, BAG<F
 		}
 		else if (!shots.empty())
 		{
-			if (Distance(my_unit.center, shots[0]) <= 100)
+			if (Distance(my_unit.center, shots[0]) <= 100 && my_unit.lifes <= 60)
 			{
 				if (shots[0].x > my_unit.center.x)
 				{
@@ -993,6 +994,13 @@ todo dll::AINextMove(EVIL& my_unit, BAG<FPOINT>&civils, BAG<FPOINT>&shots, BAG<F
 		else
 		{
 			if (my_unit.dir == dirs::left && target_x >= my_unit.start.x)
+			{
+				if (my_unit.center.x >= scr_width / 2.0f)my_unit.set_path(-scr_width, target_y);
+				else my_unit.set_path(2.0f * scr_width, target_y);
+				ret = todo::patrol;
+				my_unit.current_action = todo::patrol;
+			}
+			else if (my_unit.dir == dirs::right && target_x <= my_unit.end.x)
 			{
 				if (my_unit.center.x >= scr_width / 2.0f)my_unit.set_path(-scr_width, target_y);
 				else my_unit.set_path(2.0f * scr_width, target_y);
