@@ -289,7 +289,7 @@ namespace dll
 				if (m_pos == 0)clear();
 				else
 				{
-					for (size_t count = index; count < m_pos - 1; ++count)m_pos[count] = m_pos[count + 1];
+					for (size_t count = index; count < m_pos - 1; ++count)m_ptr[count] = m_ptr[count + 1];
 					--m_pos;
 				}
 			}
@@ -309,7 +309,7 @@ namespace dll
 			else
 			{
 				++m_size;
-				m_ptr = realloc(m_ptr, m_size * sizeof(T));
+				m_ptr = reinterpret_cast<T*>(realloc(m_ptr, m_size * sizeof(T)));
 				if (!m_ptr)throw EXCEPTION(ERR_PTR);
 				else
 				{
@@ -327,28 +327,49 @@ namespace dll
 
 	////////////////////////////////////////////////////
 	
-	template<PRIMES T>bool Sort(BAG<T>Bag, bool ascending)
+	template<PRIMES T>bool PrimeSort(BAG<T>& Bag, bool ascending)
 	{
 		if (Bag.empty())return false;
 		
 		bool ok = false;
 
-		while (!ok)
+		if (ascending)
 		{
-			ok = true;
-
-			for (size_t count = 0; count < Bag.size() - 1; ++count)
+			while (!ok)
 			{
-				if (Bag[count] > Bag[count + 1])
+				ok = true;
+
+				for (size_t count = 0; count < Bag.size() - 1; ++count)
 				{
-					T temp = Bag[count];
-					Bag[count] = Bag[count + 1];
-					Bag[count + 1] = temp;
-					ok = false;
+					if (Bag[count] > Bag[count + 1])
+					{
+						T temp = Bag[count];
+						Bag[count] = Bag[count + 1];
+						Bag[count + 1] = temp;
+						ok = false;
+					}
 				}
 			}
 		}
+		else
+		{
+			while (!ok)
+			{
+				ok = true;
 
+				for (size_t count = 0; count < Bag.size() - 1; ++count)
+				{
+					if (Bag[count] < Bag[count + 1])
+					{
+						T temp = Bag[count];
+						Bag[count] = Bag[count + 1];
+						Bag[count + 1] = temp;
+						ok = false;
+					}
+				}
+			}
+		}
+		
 		return true;
 	}
 
