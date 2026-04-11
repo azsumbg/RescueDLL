@@ -578,6 +578,19 @@ bool dll::METEORS::move(float gear)
 	return true;
 }
 
+int dll::METEORS::get_frame()
+{
+	--max_delay;
+	if (max_delay <= 0)
+	{
+		max_delay = 4;
+		++frame;
+		if (frame > 19)frame = 0;
+	}
+
+	return frame;
+}
+
 void dll::METEORS::Release()
 {
 	delete this;
@@ -957,6 +970,11 @@ todo dll::AINextMove(EVIL& my_unit, BAG<FPOINT>&civils, BAG<FPOINT>&shots, BAG<F
 		else if (!powerups.empty())
 		{
 			if (Distance(powerups[0], my_unit.center) <= my_unit.see_range)my_unit.set_path(powerups[0].x, powerups[0].y);
+			ret = todo::move;
+		}
+		else if (!civils.empty())
+		{
+			if (Distance(civils[0], my_unit.center) <= my_unit.see_range)my_unit.set_path(civils[0].x, civils[0].y);
 			ret = todo::move;
 		}
 		else

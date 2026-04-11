@@ -487,6 +487,8 @@ namespace dll
 
 		bool move(float gear);
 
+		int get_frame();
+
 		void Release();
 
 		static METEORS* create(meteors type, float first_x, float first_y, float end_x, float end_y);
@@ -555,8 +557,8 @@ namespace dll
 
 		float _speed = 0.8f;
 
-		int attack_delay = 80;
-		int max_attack_delay = 80;
+		int attack_delay = 50;
+		int max_attack_delay = 50;
 		
 		EVIL(float _sx, float _sy);
 
@@ -567,8 +569,8 @@ namespace dll
 		int armor = 1;
 		int damage = 5;
 
-		float see_range = 200.0f;
-		float shoot_range = 100.0f;
+		float see_range = 300.0f;
+		float shoot_range = 250.0f;
 
 		bool move(float ex, float ey, float gear);
 
@@ -582,6 +584,8 @@ namespace dll
 
 	struct RESCUEDLL_API BONUS
 	{
+		bonus what{ bonus::points };
+
 		float sx{ 0 };
 		float sy{ 0 };
 		float ex{ 32.0f };
@@ -591,9 +595,13 @@ namespace dll
 
 		void set_opacity()
 		{
-			static float duration = 3.1f;
-			duration -= 0.1f;
-			opacity = duration / 3.0f;
+			static int delay = 10;
+			--delay;
+			if (delay <= 0)
+			{
+				delay = 10;
+				opacity -= 0.1f;
+			}
 		}
 
 		void set_edges()
